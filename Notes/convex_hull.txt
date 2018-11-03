@@ -1,0 +1,41 @@
+// Convex hull of a set of N points is the smallest perimeter fence enclosing the points.
+// Convex hull output: sequence of vertices in counterclockwise order. Points on boundary (line segment) are not to be considered.
+// Application: robot motion planning. Find shortest path in the plane from s to t that avoids a polygonal obstacle.
+// Application: farthest pair problem. Given N points in the plane, find a pair of points with the largest Euclidean distance between them.
+
+// Traverse the convex hull only by making counterclockwise turns
+// The vertices of convex hull appear in increasing order of polar angle w.r.t. point p with lowest y-coordinate.
+
+// Algorithm:
+// Choose p with smallest y coordinate
+// Sort points by polar angle p
+// Consider points in order; discard unless it creates a counterclockwise turn.
+
+// Counter clock-wise
+// Given three points a, b, c. is a->b->c in counterclockwise direction?
+// Determinant (cross-product) gives twice the area of planar triangle
+// 2 * Area(a, b, c) = 	| ax ay 1 |	= (bx - ax) * (cy - ay) - (by - ay) * (cx - ax)
+						| bx by 1 |
+						| cx cy 1 |
+// If signed area > 0, counterclockwise
+// If signed area < 0, clockwise
+// If signed area = 0, colinear
+
+// Graham scan - simplifying assumptions, no three points on a line, at least 3 points
+// NlogN for sorting, linear for rest
+Stack<Point2D> hull = new Stack<Point>();
+
+Arrays.sort(p, Point2D.Y_ORDER);	// p[0] is now the point with lowest coordinate
+Arrays.sort(p, p[0].BY_POLAR_ORDER);	// sort by polar angle w.r.t. p[0]
+
+hull.push(p[0]);
+hull.push(p[1]);	// both definitely on hull
+
+for(int i = 2; i < N; i++) {
+	Point2D top = hull.pop();
+	while(Point2D.ccw(hull.peek(), top, p[i]) <= 0) {
+		top = hull.pop();
+	}
+	hull.push(top);
+	hull.push(p[i]);
+}

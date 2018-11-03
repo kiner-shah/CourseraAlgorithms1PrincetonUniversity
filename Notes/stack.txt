@@ -1,0 +1,94 @@
+// Stack using Linked-list implementation
+// Every operation takes constant time in worst case
+// For N items, ~40N bytes
+public class LinkedStackOfStrings {
+	private Node first = null;
+	// private inner class (access modifiers doesn't matter)
+	// For one object = 16 bytes object overhead +
+	//					8 bytes extra overhead (as it's inner class) +
+	//					8 bytes for String reference +
+	//					8 bytes for Node reference = 40 bytes
+	private class Node {
+		String item;
+		Node next;
+	}
+	public boolean isEmpty() {
+		return first == null;
+	}
+	public void push(String item) {
+		Node oldFirst = first;
+		first = new Node();
+		first.item = item;
+		first.next = oldfirst;
+	}
+	public String pop() {
+		String item = first.item;
+		first = first.next;
+		return item;
+	}
+}
+
+// Stack using array implementation
+// Considerations:
+// 	1. Resizing arrays during overflow. Throwing exceptions when underflow due to pop from empty stack.
+//	2. Allowing null items to be inserted.
+//	3. Loitering: holding a reference to an object when it is no longer needed.
+public class FixedCapacityStackOfStrings {
+	private String[] s;
+	private int N = 0;
+
+	public FixedCapacityStackOfStrings(int capacity) {
+		s = new String[capacity];
+	}
+	public boolean isEmpty() {
+		return N == 0;
+	}
+	public void push(String item) {
+		s[N++] = item;
+	}
+	public String pop() {
+		// return s[--N];	//	<-- causes loitering
+		String item = s[--N];
+		s[N] = null;
+		return item;
+	}
+}
+
+// Resizing arrays (growing arrays): when array is full, create new array with twice the size (repeated doubling).
+// Cost of inserting first N items = N (1 array access per push) +
+//									(2 + 4 + 8 + .. + N) (k array accesses to double to size k)
+//									= ~3N
+public ResizingArrayOfStrings() {
+	s = new String[1];
+}
+public void push(String item) {
+	if(N == s.length) resize(2 * s.length);
+	s[N++] = item;
+}
+private void resize(int capacity) {
+	String[] copy = new String[capacity];
+	for(int i = 0; i < N; i++)
+		copy[i] = s[i];
+	s = copy;
+}
+// Resizing arrays (shrinking arrays): half the size of array when the array is quarter full
+public String pop() {
+	String item = s[--N];
+	s[N] = null;
+	if(N > 0 && s.length / 4 == N) resize(s.length / 2);
+	return item;
+}
+// +--------------------------------------+
+// |           | best | worst | amortized |
+// +--------------------------------------+
+// | construct |  1   |  1    |  1        |
+// +--------------------------------------+
+// | push      |  1   |  N    |  1        |
+// +--------------------------------------+
+// | pop       |  1   |  N    |  1        |
+// +--------------------------------------+
+// | size      |  1   |  1    |  1        |
+// +--------------------------------------+
+
+// ~8N (when full) and ~32N (when quarter-full) bytes to represent stack with N items
+// 8 bytes (reference to array) + 24 bytes (array overhead) + 8 bytes * array size + 4 bytes int + 4 bytes padding

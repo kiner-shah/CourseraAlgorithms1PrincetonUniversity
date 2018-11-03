@@ -1,0 +1,32 @@
+// Steps:
+//	1. Build a max-heap
+//	2. Repeatedly delete the largest remaining item
+public class Heap {
+	public static void sort(Comparable[] pq) {
+		int N = pq.length;
+		for(int i = k / 2; i >= 1; i--) {
+			sink(pq, k, N);
+		}
+		while(N > 1) {
+			exch(pq, 1, N);
+			sink(pq, 1, --N);
+		}
+	}
+	private static void sink(Comparable[] pq, int k, int N) {
+		/* as before */
+	}
+	private static void exch(Comparable[] pq, int i, int j) {
+		/* as before */
+	}
+	private static boolean less(Comparable[] pq, int i, int k) {
+		/* as before */
+	}
+}
+// Heap construction: uses <= 2N compares and exchanges
+// Heapsort: uses <= 2lgN compares and exchanges
+// In-place sorting algorithm with NlogN worst-case
+
+// Problems:
+//	1. Inner loop longer than quicksort's
+//	2. Makes poor use of cache memory
+//	3. Not stable

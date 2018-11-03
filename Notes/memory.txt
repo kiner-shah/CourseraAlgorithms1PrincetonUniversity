@@ -1,0 +1,12 @@
+Note: This is by considering Java as implementation language
+Primitive types: 4 bytes for int, 8 bytes for double.
+Object reference: 8 bytes
+Array: 24 bytes + memory for each array entry
+Object: 16 bytes + memory for each instance variable + 8 if inner class (pointer to enclosing class)
+Padding: rounding up to multiple of 8 bytes.
+
+Shallow memory usage: don't count referenced objects.
+Deep memory usage: if an array entry or instance variable is a reference, add memory (recursively) for referenced object.
+
+Q. How much memory (in bytes) does a \verb#WeightedQuickUnionUF#WeightedQuickUnionUF object use as a function of the number of elements nn?
+A. ~8n. It contains two integer arrays as instance variables, each of which consumes ~4n bytes. (The object overhead is negligible as n gets large.)

@@ -1,0 +1,107 @@
+// Complete binary tree property: height of complete tree with N nodes is floor(lgN)
+// Binary heap: array representation of heap-ordered complete binary tree.
+// Heap ordered tree: key in nodes, parent's key is no smaller than children's keys (max-heap)
+// Array representation:
+//	1. Indices start at 1
+//	2. Take nodes in level order
+//	3. No explicit links needed
+
+// Properties of (max) binary heap:
+//	1. Largest key is a[1], root of binary tree
+//	2. Can use array indices to move through the tree: parent node of k is at k / 2, children of k are at 2k and 2k + 1 respectively.
+// Peter principle: node gets promoted to the level of incompetence
+
+// Scenario: key of child becomes greater than key of parent
+// Solution: exchange the key in the child with its parent, repeat until heap-order is restored
+private void swim(int k) {
+	while(k > 1 && less(k / 2, k)) {
+		exch(k, k / 2);
+		k = k / 2;
+	}
+}
+// Insertion takes atmost 1 + lgN compares
+public void insert(Key x) {
+	pq[++N] = x;
+	swim(N);
+}
+// Problem: Parent's key becomes larger than one or both of its children
+// Solution: exchange key in parent with key in larger child, repeat until heap-order is restored
+// Power struggle: better subordinate promoted
+private void sink(int k) {
+	while(2 * k <= N) {
+		int j = 2 * k;
+		if(j < N && less(j, j + 1)) j++;
+		if(!less(k, j)) break;
+		exch(k, j);
+		k = j;
+	}
+}
+// Deletion: exchange root with node at end, then sink it down.
+// Takes at most 2lgN compares
+public Key delMax() {
+	Key max = pq[1];
+	exch(1, N--);
+	sink(1);
+	pq[N+1] = null;
+	return max;
+}
+
+public class MaxPQ<Key extends Comparable<Key>> {
+	private Key[] pq;
+	private int N;
+
+	public MaxPQ(int capacity) {
+		pq = (Key[]) new Comparable[capacity + 1];
+	}
+	puyblic boolean isEmpty() {
+		return N == 0;
+	}
+	public void insert(Key key) {
+		/* see previous code */
+	}
+	public Key delMax() {
+		/* see previous code */
+	}
+	private void swim(int k) {
+		/* see previous code */
+	}
+	private void sink(int k) {
+		/* see previous code */
+	}
+	private boolean less(int i, int j) {
+		return pq[i].compareTo(pq[j]) < 0;
+	}
+	private void exch(int i, int j) {
+		Key temp = pq[i]; pq[i] = pq[j]; pq[j] = temp;
+	}
+}
+
+// Considerations:
+//	1. Immutability:
+//		a. Assumption: client doesn't change keys when keys are in PQ
+//		b. Best practice: use immutable keys
+//	2. Underflow and Overflow:
+//		a. Underflow: throw an exception if deleting from empty PQ
+//		b. Overflow: add no-arg constructor and use resizing array (leads to logN amortized time per operation)
+//	3. Minimum-oriented priority queue
+//		a. replace less() with greater()
+//		b. implement greater()
+//	4. Other operations (can implement with sink() and swim())
+//		a. Remove an arbitrary item
+//		b. Change the priority of an arbitrary item
+
+// To implement immutability, use final keyword
+public final class Vector {
+	private final int N;
+	private final double data[];
+
+	public Vector(double[] data) {
+		this.N = data.length;
+		this.data = new double[N];
+
+		for(int i = 0; i < N; i++) {
+			this.data[i] = data[i];
+		}
+
+	}
+}

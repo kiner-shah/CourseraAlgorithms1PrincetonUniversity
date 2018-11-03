@@ -1,0 +1,93 @@
+// Time complexity: O(NlogN)
+// NlogN compares, 6NlogN array accesses to sort an array of size N
+// Uses extra space proportional to N (auxiliary array)
+public class Merge {
+	private static Comparable[] aux;
+	private static void merge(Comparable[] a, Comparable[] aux, int lo, int mid, int hi) {
+		assert(isSorted(a, lo, mid));
+		assert(isSorted(a, mid + 1, hi));
+		for(int k = lo; k <= hi; k++) {	// copy
+			aux[k] = a[k];
+		}
+		int i = lo, j = mid + 1;
+		for(int k = lo; k <= hi; k++) {	// merge
+			if(i > mid) a[k] = aux[j++];
+			else if(j > hi) a[k] = aux[i++];
+			else if(less(aux[j], aux[i])) a[k] = aux[j++];
+			else a[k] = aux[i++];
+		}
+		assert(isSorted(a, lo, hi));
+	}
+	private static void sort(Comparable[] a, Comparable[] aux, int lo, int hi) {
+		if(hi <= lo) return;
+		int mid = lo + (hi - lo) / 2;
+		sort(a, aux, lo, mid);
+		sort(a, aux, mid + 1, hi);
+		merge(a, aux, lo, mid, hi);
+	}
+	public static void sort(Comparable[] a) {
+		aux = new Comparable[a.length];
+		sort(a, aux, 0, a.length - 1);
+	}
+}
+// Laptop executes 10^8 compares / second
+// Supercomputers executes 10^12 compares / second
+
+// A sorting algorithm is in-place if it uses <= clogN extra memory. E.g. insertion sort, shell sort, selection sort.
+
+// Improvements:
+//	1. Merge sort is too complicated to be used for tiny arrays. Cutoff to insertion sort for <= 7 items.
+private static void sort(Comparable[] a, Comparable[] aux, int lo, int hi) {
+	if(hi <= lo + CUTOFF - 1) {
+		Insertion.sort(a, lo, hi);
+		return;
+	}
+	int mid = lo + (hi - lo) / 2;
+	sort(a, aux, lo, mid);
+	sort(a, aux, mid + 1, hi);
+	merge(a, aux, lo, mid, hi);
+}
+//	2. Stop if already sorted i.e. if biggest element in first half is <= smallest element in second half. Helps for partially-ordered arrays
+private static void sort(Comparable[] a, Comparable[] aux, int lo, int hi) {
+	if(hi <= lo) return;
+	int mid = lo + (hi - lo) / 2;
+	sort(a, aux, lo, mid);
+	sort(a, aux, mid + 1, hi);
+	if(!less(a[mid + 1], a[mid])) return;
+	merge(a, aux, lo, mid, hi);
+}
+//	3. Eliminate the copy to auxiliary array. Saves time but (not space) by switching the role of input and auxiliary array in each recursive call.
+private static void merge(Comparable[] a, Comparable[] aux, int lo, int mid, int hi) {
+	int i = lo, j = mid + 1;
+	for(int k = lo; k <= hi; k++) {	// merge
+		if(i > mid) aux[k] = a[j++];
+		else if(j > hi) aux[k] = a[i++];
+		else if(less(a[j], a[i])) aux[k] = a[j++];	// merge from a[] to aux[]
+		else aux[k] = a[i++];
+	}
+}
+private static void sort(Comparable[] a, Comparable[] aux, int lo, int hi) {
+	if(hi <= lo) return;
+	int mid = lo + (hi - lo) / 2;
+	sort(aux, a, lo, mid);			// sort() initializes aux[] and sets aux[i] = a[i] for each i
+	sort(aux, a, mid + 1, hi);
+	merge(a, aux, lo, mid, hi);		// switch roles of aux[] and a[]
+}
+
+
+// Bottom-up merge sort
+public class MergeBU {
+	private static Comparable[] aux;
+	private static void merge(Comparable[] a, Comparable[] aux, int lo, int mid, int hi) {
+		/* Same as before */
+	}
+	public static void sort(Comparable[] a) {
+		int N = a.length;
+		aux = new Comparable[N];
+		for(int sz = 1; sz <= N; sz = sz + sz) {
+			for(int lo = 0; lo < N - sz; lo += sz + sz) {
+				merge(a, aux, lo, lo + sz - 1, Math.min(lo + sz + sz - 1, N - 1));
+			}
+		}
+	}
+}

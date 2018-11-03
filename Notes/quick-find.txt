@@ -1,0 +1,20 @@
+// quick-find approach (eager approach) for union-find
+public class QuickFindUF {
+	private int[] id;
+	public QuickFindUF(int N) {
+		id = new int[N];
+		for(int i = 0; i < N; i++) 	// N array accesses
+			id[i] = i;
+	}
+	public boolean isConnected(int p, int q) {
+		return id[p] == id[q];	// 2 array accesses
+	}
+	public void union(int p, int q) {
+		int pid = id[p];	// 1 array access
+		int qid = id[q];	// 1 array access
+		for(int i = 0; i < id.length; i++) {
+			if(id[i] == pid) id[i] = qid;	// N array accesses
+		}
+	}
+}
+// for N union operations when N objects are there, N^2 time is required; it doesn't scale much.

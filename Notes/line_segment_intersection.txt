@@ -1,0 +1,11 @@
+// Orthogonal line segment intersection search
+// Given N horizontal and vertical line segments, find all intersections
+// Nondegenracy assumption: all x- and y-coordinates are distinct
+
+// Sweep-line algorithm: sweep vertical line from left to right
+// x-coordinates defines events
+// h-segment (left endpoint): insert y-coordinate into BST
+// h-segment (right endpoint): remove y-coordinate from BST
+// v-segment: range search for interval of y-endpoints
+// Takes time proportional to NlgN + R to find all R intersections among N orthogonal line segments
+// Sweep-line reduces 2-d orthogonal line segment intersection search to 1-d range search

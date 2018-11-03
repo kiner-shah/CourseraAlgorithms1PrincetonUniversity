@@ -1,0 +1,47 @@
+// Set: a collection of distict keys
+// Implement by removing "value" from any Symbol Table (ST) implementation
+// Applications: as an exception filter
+public class SET<Key extends Comparable<Key>> {
+	SET();
+	void add(Key key);
+	boolean contains(Key key);
+	void remove(Key key);
+	int size();
+	Iterator<Key> iterator;
+}
+
+// Dictionary lookup client
+// Applications: DNS lookup, Amino acids codon-name lookup, etc.
+
+// Indexing clients
+// Applications: file indexing (key: query string, value: set of files containing that string), index for a e-book, concordance queries, etc.
+
+// Sparse vectors
+// Symbol table representation: key = index, value = entry.
+// Efficient iterator and space proportional to number of non-zeros
+public class SparseVector {
+	private HashST<Integer, Double> v;
+
+	public SparseVector() {
+		v = new HashST<Integer, Double>();
+	}
+	public void put(int i, double x) {
+		v.put(i, x);
+	}
+	public double get(int i) {
+		if (!v.contains(i)) return 0.0;
+		else return v.get(i);
+	}
+	public Iterable<Integer> indices() {
+		return v.keys();
+	}
+	public double dot(double[] that) {
+		double sum = 0.0;
+		for (int i : indices()) {
+			sum += that[i] * this.get(i);
+		}
+		return sum;
+	}
+}
+// Sparse matrix representation: each row is a sparse vector
+// Leads to linear time if dot product between a matrix and vector is computed

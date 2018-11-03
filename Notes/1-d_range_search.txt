@@ -1,0 +1,16 @@
+// Intersections in geometric objects
+// Applications: CAD, Games, Movies, Virtual Reality, Databases, etc.
+// Efficient solutions: binary search trees and its extensions
+
+// Geometric interpretation: Keys are points on a line. Find / count points in a given 1-d interval.
+// 1-d range count
+// Running time proportional to lgN
+public int size(Key lo, Key hi) {
+	if (contains(hi)) return rank(hi) - rank(lo) + 1;
+	else return rank(hi) - rank(lo);
+}
+// 1-d range search: find all keys between lo and hi
+// Running time proportional to R + lgN
+//	1. Recursively find all keys in left subtree (if coud fall in range)
+//	2. Check key in current node
+//	3. Recursively find all keys in right subtree (if coud fall in range)

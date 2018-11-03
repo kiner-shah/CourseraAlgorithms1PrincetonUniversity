@@ -1,0 +1,36 @@
+// Linear probing vs Separate chaining
+// Separate chaining:
+//	1. Easier to implement delete
+//	2. Performance degrades gracefully
+//	3. Clustering less sensitive to poorly-designed hash function
+// Linear probing:
+//	1. Less wasted space
+//	2. Better cache performance
+
+// Variants:
+// Two-probe hashing (variant of separate chaining)
+//	1. Hash to two positions, insert key in shorter of the two chains
+//	2. Reduces expected length of longest chain to log log N
+// Double hashing (variant of linear-probing)
+//	1. Use linear probing but skip a variable amount, not just 1 at a time
+//	2. Effectively eliminates clustering
+//	3. Can allow table to become nearly full
+//	4. More difficult to implement delete
+// Cuckoo hashing (variant of linear-probing)
+//	1. Hash key to two positions: insert key into either position; if occupied reinsert displaced key into its alternative position (and recur)
+//	2. Constant worst case time for search
+
+// Hash tables vs balanced search trees
+// Hash tables:
+//	1. Simpler to code
+//	2. No effective alternative for unordered keys
+//	3. Faster for simple keys (a few arithmetic operations versus logN compares)
+//	4. Better system support in Java for strings (e.g. cached hash code)
+// BSTs:
+//	1. Stronger performance guarantee
+//	2. Support for ordered symbol table operations
+//	3. Easier to implement compareTo() correcly than equals() and hashCode()
+
+// Java system includes both:
+//	BST: TreeMap, TreeSet
+//	Hash table: HashMap, IdentityHashMap

@@ -1,0 +1,138 @@
+// Comparable API
+// Implement compareTo() so that v.compareTo(w)
+//	1. is a total order (anti-symmetric, transitive and total)
+//	2. returns postive, 0, or negative based on whether one object is greater, equal or lesser than other, respectively
+//	3. throws an exception if incompatible types (or either is null)
+
+// Helper functions
+private static boolean less(Comparable a, Comparable b) {
+	return a.compareTo(b) < 0;
+}
+private static void exchg(Comparable a, Comparable b) {
+	Comparable temp = a;
+	a = b;
+	b = temp;
+}
+// Test if array is sorted
+private static boolean isSorted(Comparable[] a) {
+	for(int i = 1; i < a.length; i++) {
+		if(less(a[i], a[i - 1])) return false;
+	}
+	return true;
+}
+
+// Example of Comparable interface
+public class Date implements Comparable<Date> {
+	private final int month, day, year;
+
+	public Date(int m, int d, int y) {
+		month = m;
+		day = d;
+		year = y;
+	}
+	public int compareTo(Date other) {
+		if(year < other.year) return -1;
+		if(year > other.year) return 1;
+		if(month < other.month) return -1;
+		if(month > other.month)	return 1;
+		if(day < other.day) return -1
+		if(day > other.day) return 1
+		return 0;
+	}
+}
+
+// Selection sort
+// Uses ~N^2 / 2 compares and exactly N exchanges (swaps)
+// Quadratic time even if input is sorted
+// Data movement is minimal: its linear
+public class Selection {
+	public static void sort(Comparable[] a) {
+		int N = a.length;
+		for(int i = 0; i < N; i++) {
+			int min = i;
+			for(int j = i + 1; i < N; i++) {
+				if(less(a[j], a[min]))
+					min = j;
+				exch(a, i, min);
+			}
+		}
+	}
+	private static boolean less(Comparable a, Comparable b) {
+		return a.compareTo(b) < 0;
+	}
+	private static void exch(Comparable[] a, int i, int j) {
+		Comparable temp = a[i];
+		a[i] = a[j];
+		a[j] = temp;
+	}
+}
+
+// Insertion sort
+// Uses ~N^2 / 4 compares and exchanges (swaps) on average
+// Best case: array sorted in ascending order, N - 1 compares and 0 exchanges
+// Worst case: array sorted in descending order (with no duplicates), ~N^2 / 2 compares and exchanges
+public class Insertion {
+	public static void sort(Comparable[] a) {
+		int N = a.length;
+		for(int i = 0; i < N; i++) {
+			for(int j = i; j > 0; j--) {
+				if(less(a[j], a[j - 1]))
+					exch(a, j, j - 1);
+				else
+					break;
+			}
+		}
+	}
+	private static boolean less(Comparable a, Comparable b) {
+		return a.compareTo(b) < 0;
+	}
+	private static void exch(Comparable[] a, int i, int j) {
+		Comparable temp = a[i];
+		a[i] = a[j];
+		a[j] = temp;
+	}
+}
+
+// Inversion is a pair of keys that are out of order
+// An array is partially sorted if no. of inversions is less than some constant i.e. <= cN.
+// Insertion sort runs in linear time for partially sorted arrays. Number of exchanges equals the number of inversions and number of compares = exchanges + (N - 1)
+
+
+// Shell sort
+// h-sorted array: h interleaved sorted subsequences
+// use insertion sort with stride length h
+// Insertion sort because if increments are big than small subarray will be sorted (which insertion sort can do better) and if increments are small then array is nearly in order
+// A g-sorted array remains g-sorted after h-sorting it
+// Increment sequences that can be used:
+//	1. 3x + 1 => 1, 4, 13, 40, ...
+//	2. merging of (9 * 4^i) - (9 * 2^i) + 1 and 4^i - (3 * 2^i) + 1 => 1, 5, 9, 19, 41, ...
+// Worst case: with 3x + 1, no of compares is O(N^(3/2))
+public class Shell {
+	public static void sort(Comparable[] a) {
+		int N = a.length;
+		int h = 1;
+		while(h < N / 3) h = 3 * h + 1;	// 3x + 1
+		while(h >= 1) {
+		// h-sort the array
+			for(int i = h; i < N; i++) {		// insertion sort
+				for(int j = i; j >= h && less(a[j], a[j - h]); j-= h) {
+					exch(a, j, j - h);
+				}
+			}
+			h = h / 3;
+		}
+	}
+	private static boolean less(Comparable a, Comparable b) {
+		return a.compareTo(b) < 0;
+	}
+	private static void exch(Comparable[] a, int i, int j) {
+		Comparable temp = a[i];
+		a[i] = a[j];
+		a[j] = temp;
+	}
+}
+
+// Shell sort is fast unless array is huge. Applicable to be used in embedded systems
+
+// Shuffling: in iteration i, pick a integer r between 0 and i uniformly at random and swap a[i] and a[r].
+// Also called, Fisher-Yates algorithm or Knuth Shuffling algorithm. Produces a uniformly random permutation of input array in linear time.

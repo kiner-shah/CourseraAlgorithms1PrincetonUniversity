@@ -1,0 +1,126 @@
+// Molecular dynamic simulation of hard discs
+// Goal: Simulate the motion of N moving particles that behave according to the laws of elastic collision
+// Hard disc model:
+//	1. Moving particles interact via elastic collisions with each other and walls
+//	2. Each particle is a disc with known position, velocity, mass and radius
+//	3. No other forces
+// Significance: Relates macroscopic observables (temperature, pressure, diffusion constant) to microscopic dynamics (motion of individual atoms and molecules)
+// Maxwell-Boltzmann: distribution of speeds as a function of temperature
+// Einstein: explain brownian motion of pollen grains
+
+// Bouncing balls
+// Time-driven simulation: N bouncing balls in the unit square
+public class BouncingBall {
+	public static void main(String[] args) {
+		int N = Integer.parseInt(args[0]);
+		Ball[] balls = new Ball[N];
+		for(int i = 0; i < N; i++)
+			balls[i] = new Ball();
+		while(true) {
+			StdDraw.clear();
+			for(int i = 0; i < N; i++) {
+				balls[i].move(0.5);
+				balls[i].draw();
+			}
+			StdDraw.show(50);
+		}
+	}
+}
+public class Ball {
+	private double rx, ry;
+	private double vx, vy;
+	private final double radius;
+	public Ball() {
+		/* initialize position and velocity */
+	}
+	public void move(double dt) {
+		// check for collision with walls
+		if((rx + vx * dt < radius) || ((rx + vx * dt > 1.0 - radius)) vx = -vx;
+		if((ry + vy * dt < radius) || ((ry + vy * dt > 1.0 - radius)) vy = -vy;
+
+		rx = rx + vx * dt;
+		ry = ry + vy * dt;
+	}
+	public void draw() {
+		StdDraw.filledCircle(rx, ry, radius);
+	}
+}
+
+// Event-driven simulation: change state only when something happens
+// Between collisions, particles move in a straight line
+// Focus only on times when collisions occur
+// Maintain PQ of collision events, prioritized by time
+// Remove the min = get next collision
+// Collision prediction: given position, velocity, radius of a particle, when will it collide next with a wall or another particle?
+// Collision resolution: if collision occurs, update colliding particle(s) patterns, according to laws of elastic collisions
+
+// Initialization:
+//	1. Fill PQ with all potential particle-wall collisions
+//	2. Fill PQ with all potential particle-particle collisions
+// NOTE: "potential" since collision may not happen if some other collision intervenes
+
+// Main loop:
+//	1. Delete the impeding event from PQ (min priority = t)
+//	2. If the event has been invalidated, ignore it
+//	3. Advance all particles to time t, on a straight-line trajectory
+//	4. Update the velocites of colliding particle(s)
+//	5. Predict future particle-wall and particle-particle collisions involving the colliding particle(s) and insert events into PQ
+
+// Conventions:
+//	1. neither particle null: particle-particle collision
+//	2. one particle null: particle-wall collision
+//	3. both particles null: redraw event
+public class Event implements Comparable<Event> {
+	private double time;
+	private Particle a, b;
+	private int countA, countB;
+
+	public Event(double t, Particle a, Particle b) {}
+	public int compareTo(Event that) {
+		return this.time - that.time;
+	}
+	public boolean isValid() {}	// invalid if intervening collision
+}
+
+public class CollisionSystem {
+	private MinPQ<Event> pq;
+	private double t = 0.0;
+	private Particle[] particles;
+
+	public CollisionSystem(Particle[] particles) {}
+	private void predict(Particle a) {
+		if(a == null) return;
+		for(int i = 0; i < N; i++) {
+			double dt = a.timeToHit(particles[i]);
+			pq.insert(new Event(t + dt, a, particles[i]));
+		}
+		pq.insert(new Event(t + a.timeToHitVerticalWall(), a, null));
+		pq.insert(new Event(t + a.timeToHitHorizontalWall(), null, a));
+	}
+	private void redraw();
+	public void simulate() {
+		pq = new MinPQ<Event>();
+		for(int i = 0; i < N; i++) predict(particles[i]);
+		pq.insert(new Event(0, null, null));
+
+		while(!pq.isEmpty()) {
+			Event event = pq.delMin();
+			if(!event.isValid()) continue;
+			Particle a = event.a;
+			Particle b = event.b;
+
+			for(int i = 0; i < n; i++) {
+				particles[i].move(event.time - t);
+			}
+			t = event.time;
+
+			if(a != null && b != null) a.bounceOff(b);
+			else if(a != null && b == null) a.bounceOffVerticalWall();
+			if(a == null && b != null) b.bounceOffHorizontalWall();
+			if(a == null && b == null) redraw();
+		}
+
+		predict(a);
+		predict(b);
+	}
+}

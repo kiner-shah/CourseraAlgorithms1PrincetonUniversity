@@ -1,0 +1,54 @@
+// 2-d orthogonal range search
+// Geometric interpretation: Keys are points in a plane. Find / count points in a given h-v rectangle
+// Applications: Networking, circuit design, databases
+// Grid implementation:
+//	1. Divide space into M by M grid of squares
+//	2. Create list of points contained in each square
+//	3. Use 2-d array to directly index relevant square
+//	4. Insert: add(x, y) to list corresponding to given square
+//	5. Range search: examine only squares that intersect 2-d range query
+// Space-time tradeoff:
+//	1. Space: M * M + N
+//	2. Time: 1 + N / (M * M) per square examined on average
+// Choose grid square size to tune performance:
+//	1. Too small: wastes space
+//	2. Too large: too many points per square
+//	3. Rule of thumb: sqrt(N) by sqrt(N) grid
+// Good algorithm if points are evenly distributed, but if clustered, not that good.
+
+// Space-partitioning trees: use tree to represent recursive subdivision of 2-d space
+// Data structure: BST, but, alternate x- and y-coordinates as key
+// Search gives rectangle containing point
+// Insert further subdivides the plane
+// 	1. Even levels: vertical line, left sub-tree (points to left of p), right sub-tree (points to right of p)
+//	2. Odd levels: horizontal line, left sub-tree (points below q), right sub-tree (points above q)
+
+// Range search:
+//	1. Check if point in node lies in given rectangle
+//	2. Recursively search left / bottom (if any could fall in rectangle)
+//	3. Recursively search right / top (if any could fall in rectangle)
+
+// Typical search: R + lgN
+// Worst case (assuming tree is balanced): R + sqrt(N)
+
+// Nearest neighbor search in a 2-d tree:
+//	1. Check distance of point in node to query point
+//	2. Recursively search left / bottom (if it could contain any closer point)
+//	3. Recursively search right / top (if it could contain any closer point)
+//	4. Organize method so that it begins by searching query point
+// Typical case: proportional to lgN
+// Worst case (even if tree is balanced): N
+
+// Flocking boids
+// Boids: three simple rules lead to complex emergent flocking behavior
+//	1. Collision avoidance: point away from k nearest boids
+//	2. Flock centering: point towards the center of mass of k nearest boids
+//	3. Velocity matching: update velocity to the average of k nearest boids
+
+// K-d tree: recursively partition k-dimensional space into 2-halfspaces
+// Implementation: BST, but cycle through dimensions ala 2-d trees
+// At level i, put the points whose ith coordinates are less than that of p on left sub-tree, put the points whose ith coordinates are greater than that of p on right sub-tree
+// level = i (mod k)
+
+// Appel's algrotihm for N-body simulation - uses 3-d tree
+

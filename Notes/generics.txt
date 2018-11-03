@@ -1,0 +1,27 @@
+// Advantage: discover type mismatch errors at compile time instead of run time.
+// Guidelines: Welcome compile-time errors, avoid run-time errors.
+public class Stack<Item> {
+	private Node first = null;
+
+	private class Node {
+		Item item;
+		Node next;
+	}
+	public boolean isEmpty() {
+		return first == null;
+	}
+	public void push(Item item) {
+		Node oldFirst = first;
+		first = new Node();
+		first.item = item;
+		first.next = oldFirst;
+	}
+	public Item pop() {
+		Item item = first.item;
+		first = first.next;
+		return item;
+	}
+}
+// Difficult with array implementation: Java doesn't allow generic array creation (in constructor).
+// Solution: Ugly casting with generic type
+s = (Item[]) new Object[capacity];

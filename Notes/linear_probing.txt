@@ -1,0 +1,39 @@
+// Also called open addressing
+// Uses array of size greater than no. of keys
+// When a new key collides, find next empty slot and put it there
+
+// Hash: map key to integer i between 0 and M - 1
+// Insert: Put at table index i if free; if not try i+1, i+2, etc.
+// Search: search table index i; if occupied but no match, try i+1, i+2, etc.
+public class LinearProbingHashST<Key, Value> {
+	private int M = 30001;
+	private Value[] vals = (Value[]) new Object[M];
+	private Key[] keys = (Key[]) new Object[M];
+
+	private int hash(Key key) { /* as before */ }
+	public void put(Key key, Value val) {
+		int i;
+		for (i = hash(key); keys[i] != null; i = (i + 1) % M) {
+			if (keys[i].equals(key))
+				break;
+		}
+		keys[i] = key;
+		vals[i] = val;
+	}
+	public Value get(Key key) {
+		for (int i = hash(key); keys[i] != null; i = (i + 1) % M) {
+			if (keys[i].equals(key))
+				return vals[i];
+		}
+		return null;
+	}
+}
+// Knuth's parking problem
+// Model: Cars arrive at one-way street with M parking spaces. Each desires a random space i: if i is taken, try i+1, i+2, etc.
+// Half-full: with M / 2 cars, mean displacement is ~3 / 2
+// Full: with M cars, mean displacement is sqrt((pi * M) / 8)
+
+// Under uniform hashing assumption, the average number of probes in a linear probing hash table of size M that contains N = alpha * M keys is:
+// ~0.5 * (1 + 1 / (1 - alpha)) for search hit
+// ~0.5 * (1 + 1 / pow(1 - alpha, 2)) for seach miss / insert
+// Typical choice: alpha = N / M ~ 0.5

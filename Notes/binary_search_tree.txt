@@ -1,0 +1,156 @@
+// A BST is a binary tree in symmetric order.
+// Symmetric order: Each node has a key and every node's key is:
+//	1. larger than all keys in its left sub-tree
+//	2. smaller than all keys in its right sub-tree
+
+// A BST is a reference to a root Node
+// A Node is comprised of four fields: Key, Value, reference to left and right sub-trees
+public class BST<Key extends Comparable, Value> {
+	private Node root;
+
+	private class Node {
+		private Key key;	// is Comparable
+		private Value val;
+		private Node left, right;
+
+		public Node(Key key, Value val) {
+			this.key = key;
+			this.val = val;
+		}
+	}
+	// Search for key: if there reset its value, else add new node
+	// No. of compares = 1 + depth of node
+	public void put(Key key, Value val) {
+		root = put(root, key, val);
+	}
+	private Node put(Node x, Key key, Value val) {
+		if(x == null) return new Node(key, val);
+		int cmp = key.compareTo(x.key);
+		if(cmp < 0)
+			x.left = put(x.left, key val);
+		else if(cmp > 0)
+			x.right = put(x.right, key val);
+		else
+			x.val = val;
+		return x;
+	}
+	// No. of compares = 1 + depth of node
+	public Value get(Key key) {
+		Node x = root;
+		while(x != null) {
+			int cmp = key.compareTo(x.key);
+			if(cmp < 0) x = x.left;
+			else if(cmp > 0) x = x.right;
+			else return x.val;
+		}
+		return null;
+	}
+	public void delete(Key key) {
+		/* see below */
+	}
+	public Iterable<Key> iterator() {
+
+	}
+}
+
+// If N distinct keys are inserted into a BST in random order, the expected number of compares for a search / insert is ~2lnN
+
+// Floor operation
+public Key floor(Key key) {
+	Node x = floor(root, key);
+	if(x == null) return null;
+	return x.key
+}
+private Node floor(Node x, Key key) {
+	if(x == null) return null;
+	int cmp = key.compareTo(x.key);
+	if(cmp == 0) return x;
+	if(cmp < 0) return floor(x.left, key);
+
+	Node t = floor(x.right, key);
+	if(t != null) return t;
+	else return x;
+}
+// Subtree counts
+private class Node {
+	private Key key;	// is Comparable
+	private Value val;
+	private Node left, right;
+	private int count;	// no. of nodes in subtree
+}
+public int size() {
+	return size(root);
+}
+private int size(Node x) {
+	if(x == null) return 0;
+	else return x.count;
+}
+private Node put(Node x, Key key, Value val) {
+	if(x == null) return new Node(key, val);
+	int cmp = key.compareTo(x.key);
+	if(cmp < 0)
+		x.left = put(x.left, key val);
+	else if(cmp > 0)
+		x.right = put(x.right, key val);
+	else
+		x.val = val;
+	x.count = 1 + size(x.left) + size(x.right);
+	return x;
+}
+// Rank
+public int rank(Key key) {
+	return rank(key, root);
+}
+private int rank(Key key, Node x) {
+	if(x == null) return 0;
+	int cmp = key.compareTo(x.key);
+	if(cmp < 0) return rank(key, x.left);
+	else if(cmp > 0) return 1 + size(x.left) + rank(key, x.right);
+	else return size(x.left);
+}
+// Iterate through keys
+public Iterable<Key> keys() {
+	Queue<Key> q = new Queue<Key>();
+	inorder(root, q);
+	return q;
+}
+private void inorder(Node x, Queue<Key> q) {
+	if(x == null) return;
+	inorder(x.left, q);
+	q.enqueue(x.key);
+	inorder(x.right, q);
+}
+// Deleting minimum key
+public void deleteMin() {
+	root = deleteMin(root);
+}
+private void deleteMin(Node x) {
+	if(x.left == null) return x.right;
+	x.left = deleteMin(x.left);
+	x.count = 1 + size(x.left) + size(x.right);
+	return x;
+}
+// Hibbard deletion - takes sqrt(N) time in worst case
+public void delete(Key key) {
+	root = delete(root, key);
+}
+private Node delete(Node x, Key key) {
+	if(x == null) return null;
+	int cmp = key.compareTo(x.key);
+	if(cmp < 0) x.left = delete(x.left, key);
+	else if(cmp > 0) x.right = delete(x.right, key);
+	else {
+		if(x.right == null) return x.left;
+		if(x.left == null) return x.right;
+
+		Node t = x;
+		x = min(t.right);
+		x.right = deleteMin(t.right);
+		x.left = t.left;
+	}
+	x.count = 1 + size(x.left) + size(x.right);
+	return x;
+}
+
+// Q. What is the order of growth of the expected height of a binary search tree with n keys after a long intermixed sequence of random insertions and random Hibbard deletions?
+// A. sqrt(n). The main defect of Hibbard deletion is that it unbalances the tree, leading to sqrt(n). If instead of replacing the node to delete with its successor, you flip a coin and replace it with either its successor or predecessor, then, in practice, the height becomes logarithmic (but nobody has been able to prove this fact mathematically).

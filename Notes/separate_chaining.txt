@@ -1,0 +1,38 @@
+// Collision: two distinct keys hashing to same index
+// Birthday problem: can't avoid collisions unless you have ridiculous quadratic amount of memory
+// Coupon collector + load balancing: collisions will be evenly distributed
+
+// Use an array of M < N linked lists
+// Hash: map key to integer i between 0 and M - 1
+// Insert: put at front of ith chain (if not already there)
+// Search: need to search only ith chain
+
+public class SeparateChainingHashST<Key, Value> {
+	private int M = 97;
+	private Node st = new Node[M];
+
+	private static class Node {
+		private Object key;
+		private Object val;
+		private Node next;
+	}
+	private int hash(Key key) {
+		return (key.hashCode & 0x7fffffff) % M;
+	}
+	public Value get(Key key) {
+		int i = hash(key);
+		for (Node x = st[i]; x != null; x = x.next) {
+			if (key.equals(x.key)) return (Value) x.val;
+		}
+		return null;
+	}
+	public void put(Key key, Value val) {
+		int i = hash(key);
+		for (Node x = st[i]; x != null; x = x.next) {
+			if (key.equals(x.key)) { x.val = val; return; }
+		}
+		st[i] = new Node(key, val, st[i]);
+	}
+}
+// Under uniform hashing assumption probability that the number of keys in a list within a constant factor of N / M is extremely close to 1
+// Consequence: number of probes for search / insert is proportional to N / M. Typically M ~ N / 5 => constant time operations

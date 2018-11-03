@@ -1,0 +1,11 @@
+// Orthogonal rectangle intersection search
+// Goal: Find all intersections among a set of N orthogonal rectangles
+// Nondegeneracy assumption: all x- and y-coordinates are distinct
+
+// Sweep line algorithm
+//	1. x-coordinates from left and right endpoints define events
+//	2. Maintain set of rectangles that intersect sweep line in an interval using search tree (using y-intervals of rectangle)
+//	3. Left endpoint: interval search for y-interval of rectangle, insert y-interval
+//	4. Right endpoint: remove rectangle
+// Takes time proportional to RlgN + NlgN to find R intersections among a set of N rectangles
+// Reduces 2-d orthogonal rectangle intersection search to 1-d interval search

@@ -1,0 +1,41 @@
+// File system model
+// Page: contiguous block of data (4096-bye chunk)
+// Probe: first to access a page (e.g. from disk to memory)
+// Property: time to access probe is much larger than time to access data within a page
+// Cost model: number of probes
+// Goal: access data using minimum number of probes
+
+// B-tree: generalize 2-3 trees by allowing up to M - 1 key-link pairs per node. M can be large such that M links fit in page for e.g., 1024
+//	1. At least 2 key-link pairs at root
+//	2. At least M / 2 key-link pairs in other nodes
+//	3. External nodes contains client keys
+//	4. Internal nodes contains copies of keys to guide search
+
+// Search in a B-tree
+//	1. Start at root
+//	2. Find interval for search key and take corresponding link
+//	3. Search terminates in external node
+
+// Insert in a B-tree
+//	1. Search for a new key
+//	2. Insert at bottom
+//	3. Split nodes with M key-link pairs on the way up the tree
+
+// Search on B-tree of order M with N keys: log_M_minus_1(N)
+// Insertion on B-tree of order M with N keys: log_M_by_2(N)
+// In practice number of probes is at most 4. M = 1024, N = 62 billion, log_M_by_2(N) <= 4
+// Optimization: always keep root page in memory
+
+// Widely used as system symbol tables
+// Java: TreeMap, TreeSet
+// C++ STL: map, multimap, multiset
+// Linux kernel: completely fair scheduler: linux/rb_tree.h
+// Emacs: conservative stack scanning
+
+// Variants: B+ tree, B* tree, B# tree
+
+// B-trees and variants widely used for file systems and databases
+// Windows: NTFS
+// MAC: HFS, HFS+
+// Linux: ReiserFS, XFS, Ext3FS, JFS
+// Databases: Oracle, DB2, INGRES, SQL, PostgreSQL

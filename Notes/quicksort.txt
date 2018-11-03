@@ -1,0 +1,107 @@
+// Best case: no. of compares ~NlgN
+// Worst case: no. of compares ~N^2 / 2
+// Average case: no. of compares ~1.39NlgN
+public class Quick {
+	private static int partition(Comparable[] a, int lo, int hi) {
+		int i = lo, j = hi + 1;
+		while(true) {
+			while(less(a[++i], a[lo]))
+				if(i == hi) break;
+			while(less(a[lo], a[--j]))
+				if(j == lo) break;
+
+			if(i >= j) break;
+			exch(a, i, j);
+		}
+		exch(a, lo, j);
+		return j;
+	}
+
+	public static void sort(Comparable[] a) {
+		StdRandom.shuffle(a);		// shuffle needed for performance guarantee
+		sort(a, 0, a.length - 1);
+	}
+
+	private static void sort(Comparable[] a, int lo, int hi) {
+		if(low >= hi) return;
+		int j = partition(a, lo, hi);
+		sort(a, lo, j - 1);
+		sort(a, j + 1, hi);
+	}
+}
+
+// Improvements:
+//	1. Insertion sort for small subarrays for N ~ 10
+private static void sort(Comparable[] a, int lo, int hi) {
+	if(hi <= lo + CUTOFF - 1) {
+		Insertion.sort(a, lo, hi);
+		return;
+	}
+	int j = partition(a, lo, hi);
+	sort(a, lo, j - 1);
+	sort(a, j + 1, hi);
+}
+//	2. Median of a sample. Median of 3 (random) items
+private static void sort(Comparable[] a, int lo, int hi) {
+	if(hi <= lo) return;
+
+	int m = medianOf3(a, lo, lo + (hi - lo) / 2, hi);
+	swap(a, lo, m);
+
+	int j = partition(a, lo, hi);
+	sort(a, lo, j - 1);
+	sort(a, j + 1, hi);
+}
+
+
+// Selection problem: similar algorithm to QuickSort
+// Linear time on average, quadratic time in worst case
+public static int select(Comparable[] a, int k) {
+	StdRandom.shuffle(a);
+	int lo = 0, hi = a.length - 1;
+	while(hi > lo) {
+		int j = partition(a, lo, hi);
+		if(j < k) lo = j + 1;
+		else if(j > k) hi = j - 1;
+		else return a[k];
+	}
+	return a[k];
+}
+
+
+// QuickSort duplicate items: stop scan on items equal to partitioning item
+// ~NlgN compares when keys are equal
+// Desirable: items equal to partitioning items should be in place
+// Solution to achive desirable outcome: 3-way partitioning
+// It is entropy-optimal: proportional to lower bound
+private static void sort(Comparable[] a, int lo, int hi) {
+	if(hi <= lo) return;
+	int lt = lo, gt = hi;
+	Comparable v = a[lo];
+	int i = lo;
+	while(i <= gt) {
+		int cmp = a[i].compareTo(v);
+		if(cmp < 0) exch(a, lt++, i++);
+		else if(cmp > 0) exch(a, i, gt--);
+		else i++;
+	}
+
+	sort(a, lo, lt - 1);
+	sort(a, gt + 1, hi);
+}
+
+// Tukey's ninther: median of median of 3 samples, each of 3 entries
+// Approximates the median of 9
+// Uses at most 12 compares
+
+// Which sorting algorithm to chose?
+// Different attributes of applications:
+//	1. Stable?
+//	2. Parallel?
+//	3. Deterministic?
+//	4. Keys all distinct?
+//	5. Multiple key types?
+//	6. Linked list or arrays?
+//	7. Large or small items?
+//	8. Is your array randomly ordered?
+//	9. Need guaranteed performance?

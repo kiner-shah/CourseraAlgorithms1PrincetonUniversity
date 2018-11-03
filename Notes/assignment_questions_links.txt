@@ -1,0 +1,5 @@
+https://www.cs.princeton.edu/courses/archive/fall12/cos226/assignments/percolation.html
+https://www.cs.princeton.edu/courses/archive/fall12/cos226/assignments/queues.html
+https://www.cs.princeton.edu/courses/archive/fall12/cos226/assignments/collinear.html
+https://www.cs.princeton.edu/courses/archive/fall12/cos226/assignments/8puzzle.html
+https://www.cs.princeton.edu/courses/archive/fall12/cos226/assignments/kdtree.html

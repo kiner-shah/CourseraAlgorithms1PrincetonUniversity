@@ -1,0 +1,13 @@
+// Allow 1 or 2 keys per node
+// 2-node: one key, two children
+// 3-node: two keys, three children
+// Perfect balance: every path form root to null link has same length
+// Symmetric order: inorder traversal yields keys in ascending order
+
+// Insertion: similar to binary search tree. Additional operation of bottom-up recursive splitting if node becomes a 4-node.
+// Search: similar to binary search tree. Additional logic to handle keys with values between those of K1 and K2.
+
+// Tree height:
+//	1. Worst case: lgN (all 2-nodes)
+//	2. Best case: log_3(N) ~ 0.631 * lgN (all 3-nodes)
+// Guaranteed logarithmic performance for insert and search

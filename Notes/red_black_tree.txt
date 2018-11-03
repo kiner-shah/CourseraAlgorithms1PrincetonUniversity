@@ -1,0 +1,93 @@
+// Left-leaning red-black trees
+//	1. Represent 2-3 tree as a BST
+//	2. Use internal 'left-leaning links' as a 'glue' for 3-nodes (represented by red-link)
+
+// An equivalent definition: a BST such that
+//	1. No node has two red-links connected to it. Since red-links are internal to a 3-node and to connect to another 2-node or 3-node, it will use an external connection which is represented by black link.
+//	2. Every path from root to null link has the same number of black links
+//	3. Red links lean left
+//	4. Null links are black
+
+// Search in red-black BST is same as that of elementary BST (ignore color)
+// But, search runs faster because of perfect balance
+// Most other operations e.g. ceiling, selection, etc. are also identical
+public Val get(Key key) {
+	Node x = root;
+	while (x != null) {
+		int cmp = key.compareTo(x);
+		if (cmp < 0) x = x.left;
+		else if (cmp > 0) x = x.right;
+		else if (cmp == 0) return x.val;
+	}
+	return null;
+}
+
+// Each node is pointed by precisely one link (from its parent) => can encode color of links in nodes
+private static final boolean RED = true;
+private static final boolean BLACK = false;
+
+private class Node {
+	Key key;
+	Value val;
+	Node left, right;
+	boolean color;	// color of parent link
+}
+
+private boolean isRed(Node x) {
+	if (x == null) return false;	// null links are black
+	return x.color == RED;
+}
+
+// Left rotation: orient a (temporary) right-leaning red link to left
+// Maintains symmetric order and perfect balance
+private Node rotateLeft(Node h) {
+	assert isRed(h.right);
+	Node x = h.right;
+	h.right = x.left;
+	x.left = h;
+	x.color = h.color;
+	h.color = RED;
+	return x;
+}
+// Right rotation: orient a (temporary) left-leaning red link to right
+// Maintains symmetric order and perfect balance
+private Node rotateRight(Node h) {
+	assert isRed(h.left);
+	Node x = h.left;
+	h.left = x.right;
+	x.right = h;
+	x.color = h.color;
+	h.color = RED;
+	return x;
+}
+// Color flip: recolor a (temporary) 4-node
+// Maintains symmetric order and perfect balance
+// Parent of 4-node will now have middle element, so internally two (or more) keys will be connected by red-link
+// Children are now separated and not keys are not within same node, so if there was a red-link, it is now converted to black-link
+private void flipColors(Node h) {
+	assert !isRed(h);
+	assert isRed(h.left);
+	assert isRed(h.right);
+	h.color = RED;
+	h.left.color = BLACK;
+	h.right.color = BLACK;
+}
+// Same code for insertion handles all cases:
+//	1. Right child red, left child black: rotate left
+//	2. Left child red, left-left grandchild red: rotate right
+//	3. Both children red: flip colors
+private Node put(Node h, Key key, Value val) {
+	if (h == null) return new Node(key, val, RED);	// insert at bottom and assign color RED
+	int cmp = key.compareTo(h.key);
+	if (cmp < 0) h.left = put(h.left, key, val);
+	else if (cmp > 0) h.right = put(h.right, key, val);
+	else	h.val = val;
+
+	if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);			// lean left
+	if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);	// balance 4-node
+	if (isRed(h.left) && isRed(h.right)) flipColors(h);			// split 4-node
+
+	return h;
+}
+
+// Height of tree: in worst case <= 2lgN

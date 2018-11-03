@@ -1,0 +1,61 @@
+// Use Object instead of Comparable
+// Pass Comparator to sort() and less() and use it in less()
+
+// Insertion sort using comparator
+public static void sort(Object[] a, Comparator comparator) {
+	int N = a.length;
+	for(int i = 0; i < N; i++) {
+		for(int j = i; j > 0 && less(comparator, a[j], a[j - 1]); j--) {
+			exch(a, j, j - 1);
+		}
+	}
+}
+private static less(Comparator comparator, Object v, Object w) {
+	return compare(v, w) < 0;
+}
+private static void exch(Object[] a, int i, int j) {
+	Object temp = a[i];
+	a[i] = a[j];
+	a[j] = temp;
+}
+
+// To implement a Comparator,
+//	1. Define a nested class that implements the Comparator interface
+//	2. Implement the compare() method
+public class Student {
+	public static final Comparator<Student> BY_NAME = new ByName();
+	public static final Comparator<Student> BY_SECTION = new BySection();
+	private static class ByName implements Comparator<Student> {
+		public int compare(Student v, Student w) {
+			return v.name.compareTo(w.name);
+		}
+	}
+	private static class BySection implements Comparator<Student> {
+		public int compare(Student v, Student w) {
+			return v.section - w.section;
+		}
+	}
+}
+
+
+// Given a point p, order points by polar angle they make with p
+// A counterclockwise based solution:
+//	1. q1 is above p, q2 is below p, q1 makes smaller polar angle
+//	2. q1 is below p, q2 is above p, q1 makes greater polar angle
+//	3. Otherwise, ccw(p, q1, q2) identifies which of q1 or q2 makes larger angle.
+public class Point2D {
+	public final Comparator<Point2D> POLAR_ORDER = new PolarOrder();
+	private static int ccw(Point2D, a, Point2D b, Point2D c) {
+		/* as before */
+	}
+	private class PolarOrder implements Comparator<Point2D> {
+		public int compare(Point2D q1, Point2D q2) {
+			double dy1 = q1.y - y;
+			double dy2 = q2.y - y;
+			if(dy1 == 0 && dy2 == 0) { ... }	// p, q1, q2 are horizontal
+			else if(dy1 >= 0 && dy2 < 0) { return -1; }
+			else if(dy1 < 0 && dy2 >= 0) { return 1; }
+			else return -ccw(Point2D.this, q1, q2);
+		}
+	}
+}
